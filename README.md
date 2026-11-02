@@ -8,6 +8,8 @@ A super simple Spigot/Paper plugin that sprays blood particles (redstone block b
 - Can be limited to players only, or show for all mobs.
 - Lets you set the intensity, maximum particles per hit, spread and particle block.
 - Skips cancelled hits (e.g. inside protected regions) and non-living entities like item frames.
+- Players can turn their own blood off with `/blood toggle`, and staff can toggle it for others.
+- `blood.bypass` permission to disable blood for specific players or groups.
 - `/blood reload` reloads the config without restarting the server.
 
 ## Supported versions
@@ -51,9 +53,19 @@ block: REDSTONE_BLOCK
 
 ## Commands & permissions
 
-| Command         | Permission     | Default | Description              |
-|-----------------|----------------|---------|--------------------------|
-| `/blood reload` | `blood.reload` | op      | Reloads `config.yml`     |
+| Command                  | Permission                     | Default  | Description                                  |
+|--------------------------|--------------------------------|----------|----------------------------------------------|
+| `/blood toggle`          | `blood.commands.toggle`        | everyone | Turn your own blood on/off                   |
+| `/blood toggle <player>` | `blood.commands.toggle.others` | op       | Turn another online player's blood on/off    |
+| `/blood reload`          | `blood.commands.reload`        | op       | Reload `config.yml`                          |
+
+| Permission         | Default | Description                                         |
+|--------------------|---------|-----------------------------------------------------|
+| `blood.bypass`     | nobody  | Players with this permission never bleed            |
+| `blood.commands.*` | op      | All of the command permissions above                |
+
+The toggle state is saved on the player, so it survives relogs and restarts.
+`blood.bypass` is not given to ops automatically; grant it with your permissions plugin.
 
 ## Building
 

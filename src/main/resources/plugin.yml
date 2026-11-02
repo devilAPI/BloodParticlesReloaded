@@ -6,10 +6,27 @@ description: Spawns blood particles when an entity is hit.
 website: https://github.com/devilAPI/BloodParticlesReloaded
 commands:
   blood:
-    description: Reload the Blood config.
-    usage: /blood reload
-    permission: blood.reload
+    description: Blood plugin commands.
+    usage: /blood <toggle [player]|reload>
 permissions:
-  blood.reload:
-    description: Allows /blood reload
+  blood.bypass:
+    description: Players with this permission never bleed.
+    default: false
+  blood.commands.toggle:
+    description: Allows /blood toggle (turn your own blood on/off).
+    default: true
+  blood.commands.toggle.others:
+    description: Allows /blood toggle <player>.
     default: op
+    children:
+      blood.commands.toggle: true
+  blood.commands.reload:
+    description: Allows /blood reload.
+    default: op
+  blood.commands.*:
+    description: Gives access to all Blood commands.
+    default: op
+    children:
+      blood.commands.toggle: true
+      blood.commands.toggle.others: true
+      blood.commands.reload: true
