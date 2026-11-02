@@ -1,5 +1,15 @@
 name: Blood
 main: me.xelades.dev.blood.Blood
 version: '${project.version}'
-api-version: '1.21'
+api-version: '1.13'
 description: Spawns blood particles when an entity is hit.
+website: https://github.com/devilAPI/BloodParticlesReloaded
+commands:
+  blood:
+    description: Reload the Blood config.
+    usage: /blood reload
+    permission: blood.reload
+permissions:
+  blood.reload:
+    description: Allows /blood reload
+    default: op

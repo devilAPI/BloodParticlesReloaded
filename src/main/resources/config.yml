@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------
+#  BloodParticlesReloaded
+#  GitHub:  https://github.com/devilAPI/BloodParticlesReloaded
+#  Bugs / suggestions:
+#           https://github.com/devilAPI/BloodParticlesReloaded/issues
+#
+#  Run "/blood reload" after editing this file.
+# ---------------------------------------------------------------
+
+# true  = only bleed when a player gets hit
+# false = bleed for every living entity (players and mobs)
+players-only: false
+
+# How much blood to spawn. 1.0 = default, 2.0 = twice as much, 0.5 = half.
+# By default you get 5 particles per point of damage.
+intensity: 1.0
+
+# Maximum number of particles spawned for a single hit.
+max-particles: 50
+
+# How far the particles spread out from the hit entity (in blocks).
+spread: 0.4
+
+# Block whose break particles are used as blood.
+block: REDSTONE_BLOCK
