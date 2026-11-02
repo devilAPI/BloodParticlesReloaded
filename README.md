@@ -1,4 +1,6 @@
 # Blood
 Super simple Spigot plugin for producing particles when an entity damages another entity.
 
-Literally 40 lines of code in this thing. It works well. No config yet, just takes the damage done and multiplies it by 5 for the particle count, which is clamped at 50.
+Takes the damage dealt, multiplies it by 5 for the particle count (capped at 50), and sprays redstone-block particles from the hit entity. No config yet.
+
+Built against the Spigot API 26.3 (works on 1.20.5+ servers, Spigot and Paper). Requires Java 21+. Build with `mvn package`.

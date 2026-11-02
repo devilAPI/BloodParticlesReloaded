@@ -2,33 +2,30 @@ name: Java CI with Maven
 
 on:
   push:
-    branches:
-      - main  # Replace with the branch you want to trigger on
+    branches: [ main ]
   pull_request:
-    branches:
-      - main  # Replace with the branch you want to trigger on
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'adoptopenjdk'
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/*.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+      - name: Build with Maven
+        run: mvn clean package --batch-mode --no-transfer-progress
 
-    - name: Run mvn clean install
-      run: mvn clean install --batch-mode --no-transfer-progress
+      - name: Upload plugin jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: Blood
+          path: target/*.jar

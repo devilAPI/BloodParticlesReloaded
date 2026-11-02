@@ -1,4 +1,5 @@
 name: Blood
 main: me.xelades.dev.blood.Blood
-version: 1.0
-api-version: 1.14
+version: '${project.version}'
+api-version: '1.21'
+description: Spawns blood particles when an entity is hit.
