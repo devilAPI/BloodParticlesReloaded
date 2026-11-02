@@ -1,18 +1,17 @@
 name: Dev Build
 
-# Builds the plugin for every supported Minecraft version on every push
-# and publishes the jars as a rolling pre-release named "dev-<branch>".
+# Builds the plugin for every supported Minecraft version on every push to
+# master and publishes the jars as a rolling pre-release tagged "dev".
 
 on:
   push:
-    branches: [ '**' ]
-    tags-ignore: [ '**' ]
+    branches: [ master ]
 
 permissions:
   contents: write
 
 concurrency:
-  group: dev-build-${{ github.ref }}
+  group: dev-build
   cancel-in-progress: true
 
 jobs:
@@ -73,10 +72,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
-          TAG="dev-${GITHUB_REF_NAME//\//-}"
+          TAG="dev"
           gh release delete "$TAG" --cleanup-tag --yes || true
           gh release create "$TAG" jars/*.jar \
             --prerelease \
             --target "$GITHUB_SHA" \
-            --title "Dev build ($GITHUB_REF_NAME @ ${GITHUB_SHA::7})" \
-            --notes "Automatic development build of \`$GITHUB_REF_NAME\` at commit $GITHUB_SHA. Not a stable release. Pick the jar matching your server's Minecraft version."
+            --title "Dev build (${GITHUB_SHA::7})" \
+            --notes "Automatic development build of master at commit $GITHUB_SHA. Not a stable release. Pick the jar matching your server's Minecraft version."
