@@ -27,7 +27,7 @@ Grab the jar whose `mc` version matches (or is closest below) your server versio
 ## Download
 
 - **Stable:** [Releases](https://github.com/devilAPI/BloodParticlesReloaded/releases/latest)
-- **Dev builds:** every push to `master` updates the `dev` pre-release on the [Releases page](https://github.com/devilAPI/BloodParticlesReloaded/releases).
+- **Dev builds:** every push to `master` publishes a numbered pre-release (`dev-1`, `dev-2`, …) on the [Releases page](https://github.com/devilAPI/BloodParticlesReloaded/releases).
 
 ## Configuration
 
@@ -85,7 +85,7 @@ The jar ends up in `target/Blood-<version>-mc<mc-version>.jar`.
 
 ## Releasing
 
-- **Dev builds:** the `Dev Build` workflow runs on every push to `master` and publishes jars for all versions as the `dev` pre-release.
+- **Dev builds:** the `Dev Build` workflow runs on every push to `master` and publishes jars for all versions as the next `dev-X` pre-release (continuous numbering).
 - **Stable releases:** go to *Actions → Release → Run workflow* and enter a version (e.g. `1.1.0`). It builds every Minecraft version and publishes a `v<version>` release.
 
 ## Issues

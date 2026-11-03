@@ -1,7 +1,8 @@
 name: Dev Build
 
-# Builds the plugin for every supported Minecraft version on every push to
-# master and publishes the jars as a rolling pre-release tagged "dev".
+# Runs on every push to master: builds the plugin for every supported
+# Minecraft version and publishes the jars as a pre-release tagged
+# dev-1, dev-2, dev-3, ... (continuous numbering).
 
 on:
   push:
@@ -12,11 +13,28 @@ permissions:
 
 concurrency:
   group: dev-build
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  number:
+    name: Pick dev number
+    runs-on: ubuntu-latest
+    outputs:
+      n: ${{ steps.next.outputs.n }}
+    steps:
+      - name: Find next dev-X number
+        id: next
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          LAST=$(gh api "repos/$GH_REPO/tags" --paginate --jq '.[].name' \
+            | grep -E '^dev-[0-9]+$' | sed 's/^dev-//' | sort -n | tail -1)
+          echo "n=$(( ${LAST:-0} + 1 ))" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build MC ${{ matrix.mc }}
+    needs: number
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,9 +50,9 @@ jobs:
           - { mc: "1.21.11", java: "21" }
           - { mc: "26.3",    java: "21" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -43,7 +61,7 @@ jobs:
       - name: Compute dev version
         run: |
           BASE=$(mvn -B -q help:evaluate -Dexpression=revision -DforceStdout)
-          echo "VERSION=${BASE}-dev-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          echo "VERSION=${BASE}-dev-${{ needs.number.outputs.n }}" >> "$GITHUB_ENV"
 
       - name: Build
         run: >
@@ -52,30 +70,30 @@ jobs:
           -Dspigot.version=${{ matrix.mc }}
           -Djava.release=${{ matrix.java }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Blood-mc${{ matrix.mc }}
           path: target/Blood-*.jar
 
   release:
-    name: Publish dev release
-    needs: build
+    name: Publish dev-${{ needs.number.outputs.n }}
+    needs: [ number, build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: jars
           merge-multiple: true
 
-      - name: Publish rolling pre-release
+      - name: Publish pre-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          TAG: dev-${{ needs.number.outputs.n }}
         run: |
-          TAG="dev"
-          gh release delete "$TAG" --cleanup-tag --yes || true
+          NOTES="Automatic development build of master at commit $GITHUB_SHA. Not a stable release. Pick the jar matching your server's Minecraft version."
           gh release create "$TAG" jars/*.jar \
             --prerelease \
             --target "$GITHUB_SHA" \
-            --title "Dev build (${GITHUB_SHA::7})" \
-            --notes "Automatic development build of master at commit $GITHUB_SHA. Not a stable release. Pick the jar matching your server's Minecraft version."
+            --title "Dev build $TAG (${GITHUB_SHA::7})" \
+            --notes "$NOTES"
